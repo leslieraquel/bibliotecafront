@@ -1,0 +1,32 @@
+
+<!-- <app-loading-overlay *ngIf="cargando"></app-loading-overlay> -->
+
+<div class="login-container d-flex vh-100">
+  <!-- Lado izquierdo: Logo o imagen -->
+  <div class="left-side1 d-none d-md-flex align-items-center justify-content-center text-white flex-fill">
+    <div class="text-center">
+      <img src="assets/logo.png" class="img-fluid mb-3" style="max-width: 200px;" />
+      <h2 class="lt-bienvenida">Bienvenido</h2>
+    </div>
+  </div>
+
+  <!-- Lado derecho: Formulario -->
+  <div class="right-side d-flex align-items-center justify-content-center flex-fill p-4">
+    <div class="card shadow-lg p-4 w-100" style="max-width: 400px;">
+      <h4 class="text-center mb-4">Iniciar Sesión</h4>
+      <form (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label for="nombreUsuario" class="form-label">Usuario</label>
+          <input type="text" id="nombreUsuario" class="form-control" [(ngModel)]="loginData.ci"  name="nombreUsuario" required />
+        </div>
+
+        <div class="mb-3">
+          <label for="claveUsuario" class="form-label">Contraseña</label>
+          <input type="password" id="claveUsuario" class="form-control" [(ngModel)]="loginData.password" name="claveUsuario" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Ingresar</button>
+      </form>
+    </div>
+  </div>
+</div>

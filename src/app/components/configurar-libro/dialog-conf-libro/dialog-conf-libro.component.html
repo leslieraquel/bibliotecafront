@@ -1,0 +1,64 @@
+  <div class="row">
+    <div class="col-md-12 dialog-container">
+        <div style=" background-color:  #0e6cc9; color:white" class="mat-dialog-header p-3 d-flex justify-content-between align-items-center border-bottom">
+        <h5 class="mb-0">
+          {{ data.modo === 'agregar' ? 'Agregar' : 'Actualizar' }} Itinerario
+        </h5>
+        <button mat-icon-button (click)="dialog.closeAll()">
+          <mat-icon style="color: white;">close</mat-icon>
+        </button>
+      </div>
+    <mat-card >
+      <mat-card-content>
+        <div class="row">
+            <div class="col-md-6">
+                <mat-form-field class="w-100" >
+                <mat-label >Titulo del libro</mat-label>
+                  <input required  matInput [(ngModel)]="title">
+                </mat-form-field>
+            </div>
+            <div class="col-md-6">
+                <mat-form-field class="w-100" >
+                <mat-label >isbn</mat-label>
+                  <input required  matInput [(ngModel)]="isbn">
+                </mat-form-field>
+            </div>
+            <div class="col-md-6">
+            <mat-form-field class="w-100">
+            <mat-label>Sinopsis</mat-label>
+             <textarea
+             matInput
+             required
+             rows="4"
+             [(ngModel)]="isbn">
+            </textarea>
+            </mat-form-field>
+            </div>
+            <div class="col-md-6">
+                <mat-form-field class="w-100">
+                    <mat-label>Autor</mat-label>
+                <mat-select required  [(ngModel)]="autorSeleccionado">
+                   <mat-option *ngFor="let autor of autores" [value]="autor.id">
+                        {{ autor.nombre }}
+                    </mat-option>
+                </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-md-6">
+                <mat-form-field class="w-100">
+                    <mat-label>Estado</mat-label>
+                <mat-select required [(ngModel)]="estadoSeleccionado">
+                    <mat-option value="activo">Activo</mat-option>
+                    <mat-option value="inactivo">Inactivo</mat-option>
+                </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card-actions class="p-3 border-top d-flex justify-content-end" >
+        <button class="me-4" mat-flat-button (click)="ActualizarOregistrarItinerario()"> {{ data.modo === 'agregar' ? 'Agregar' : 'Actualizar' }}</button>
+        <button mat-stroked-button (click)="dialog.closeAll()" >Cancelar</button>
+    </mat-card-actions>
+    </div>
+  </div>

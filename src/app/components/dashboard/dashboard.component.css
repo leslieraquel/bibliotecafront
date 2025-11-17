@@ -1,0 +1,21 @@
+.login-container {
+  .left-side1 {
+    background-color: #ababa5ed; /* beige */
+    color: #333;
+    text-align: center;
+    padding: 2rem;
+  }
+
+
+  .right-side {
+    background-color: #1163b6;
+  }
+
+  .card {
+    border-radius: 12px;
+  }
+
+  .lt-bienvenida{
+    color: #333;
+  }
+}

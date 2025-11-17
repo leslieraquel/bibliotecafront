@@ -1,0 +1,22 @@
+<div class="container">
+
+  <!-- BUSCADOR DINÁMICO -->
+  <mat-form-field appearance="outline" class="w-100 mb-3">
+    <mat-label>Buscar</mat-label>
+    <input matInput (keyup)="filtrar($event)" placeholder="Buscar por nombre...">
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <!-- TARJETAS -->
+  <div class="row">
+    <div class="col-md-4 mb-3" *ngFor="let item of datosFiltrados">
+      <mat-card>
+        <mat-card-title>{{ item.title }}</mat-card-title>
+        <mat-card-content>
+          <!-- <p>{{ item.descripcion }}</p> -->
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+</div>
