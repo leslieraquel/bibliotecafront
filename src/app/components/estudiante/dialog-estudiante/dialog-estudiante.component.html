@@ -1,0 +1,58 @@
+<div class="row">
+    <div class="col-md-12 dialog-container">
+        <div style="background-color: #0e6cc9; color: white" class="mat-dialog-header p-3 d-flex justify-content-between align-items-center border-bottom">
+            <h5 class="mb-0">
+                {{ data.modo === 'agregar' ? 'Agregar' : 'Actualizar' }} Estudiante
+            </h5>
+            <button mat-icon-button (click)="dialog.closeAll()">
+                <mat-icon style="color: white">close</mat-icon>
+            </button>
+        </div>
+
+        <mat-card>
+            <mat-card-content>
+                <div class="row">
+                    <!-- ID del Estudiante -->
+                    <div class="col-md-6">
+                        <mat-form-field class="w-100">
+                            <mat-label>ID del Estudiante</mat-label>
+                            <input required matInput [(ngModel)]="id" 
+                                   [readonly]="data.modo === 'actualizar'">
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Carrera (campo de texto libre) -->
+                    <div class="col-md-6">
+                        <mat-form-field class="w-100">
+                            <mat-label>Carrera</mat-label>
+                            <input required matInput [(ngModel)]="carrera" placeholder="Ingrese la carrera del estudiante">
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Nombre Completo -->
+                    <div class="col-md-6">
+                        <mat-form-field class="w-100">
+                            <mat-label>Nombre Completo</mat-label>
+                            <input required matInput [(ngModel)]="nombre">
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-md-6">
+                        <mat-form-field class="w-100">
+                            <mat-label>Email</mat-label>
+                            <input required matInput type="email" [(ngModel)]="email">
+                        </mat-form-field>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <mat-card-actions class="p-3 border-top d-flex justify-content-end">
+            <button class="me-4" mat-flat-button color="primary" (click)="ActualizarOregistrarEstudiante()">
+                {{ data.modo === 'agregar' ? 'Agregar' : 'Actualizar' }}
+            </button>
+            <button mat-stroked-button (click)="dialog.closeAll()">Cancelar</button>
+        </mat-card-actions>
+    </div>
+</div>

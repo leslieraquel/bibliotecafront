@@ -2,7 +2,7 @@
     <div class="col-md-12 dialog-container">
         <div style=" background-color:  #0e6cc9; color:white" class="mat-dialog-header p-3 d-flex justify-content-between align-items-center border-bottom">
         <h5 class="mb-0">
-          {{ data.modo === 'agregar' ? 'Agregar' : 'Actualizar' }} Itinerario
+          {{ data.modo === 'agregar' ? 'Agregar' : 'Actualizar' }} Libro
         </h5>
         <button mat-icon-button (click)="dialog.closeAll()">
           <mat-icon style="color: white;">close</mat-icon>
@@ -30,7 +30,7 @@
              matInput
              required
              rows="4"
-             [(ngModel)]="isbn">
+             [(ngModel)]="sinopsis">
             </textarea>
             </mat-form-field>
             </div>
@@ -39,7 +39,7 @@
                     <mat-label>Autor</mat-label>
                 <mat-select required  [(ngModel)]="autorSeleccionado">
                    <mat-option *ngFor="let autor of autores" [value]="autor.id">
-                        {{ autor.nombre }}
+                        {{ autor.name }}
                     </mat-option>
                 </mat-select>
                 </mat-form-field>
