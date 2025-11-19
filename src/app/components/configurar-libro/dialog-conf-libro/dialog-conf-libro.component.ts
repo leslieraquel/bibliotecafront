@@ -87,17 +87,25 @@ export class DialogConfLibroComponent implements OnInit {
 
     ActualizarOregistrarItinerario() {
   const nuevoLibro = {
+    id: "3",
+    editorial:"manzano",
     title: this.title,
     isbn: this.isbn,
     estado: this.estadoSeleccionado,
     idAutor:this.autorSeleccionado,
-    sinopsis:   this.sinopsis
+    sinopsis:   this.sinopsis,
+    year:"2025",
+    archivo:"2025.pdf",
+    createdAt: "2025-11-17T19:10:00Z",
+    updateAt: "2025-11-17T19:10:00Z"
+
     // archivo: this.EstadoItinerario
   };
 
-  const url = 'http://localhost:3000/api/autor/';
+  const url = 'http://localhost:3000/api/libro/';
  
   if (this.data.modo === 'agregar') {
+    console.log(nuevoLibro);
     if(nuevoLibro.title && nuevoLibro.isbn && nuevoLibro.estado && nuevoLibro.idAutor  ){
       this.http.post(url+'save', nuevoLibro).subscribe({
       next: (res) => {

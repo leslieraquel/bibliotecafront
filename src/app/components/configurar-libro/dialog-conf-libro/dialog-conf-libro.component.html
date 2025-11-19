@@ -39,7 +39,7 @@
                     <mat-label>Autor</mat-label>
                 <mat-select required  [(ngModel)]="autorSeleccionado">
                    <mat-option *ngFor="let autor of autores" [value]="autor.id">
-                        {{ autor.nombre }}
+                        {{ autor.name }}
                     </mat-option>
                 </mat-select>
                 </mat-form-field>
