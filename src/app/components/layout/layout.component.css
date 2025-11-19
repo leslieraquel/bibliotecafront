@@ -1,0 +1,33 @@
+/* NAVBAR BACKGROUND */
+.navbar {
+  background-color: #004e92 !important; /* Azul elegante */
+}
+
+/* NAV LINK NORMAL */
+.navbar .nav-link {
+  font-size: 17px;
+  color: white !important;
+  transition: 0.3s ease;
+}
+
+/* HOVER DEL TEXTO */
+.navbar .nav-link:hover {
+  color: #ffd700 !important; /* Dorado */
+  transform: scale(1.1);
+}
+
+/* HOVER DEL ITEM */
+.navbar-nav .nav-item:hover {
+  cursor: pointer;
+}
+
+/* LOGO SUAVE */
+.navbar-brand img {
+  transition: transform 0.3s ease;
+}
+
+.navbar-brand:hover img {
+  transform: scale(1.15);
+}
+
+
