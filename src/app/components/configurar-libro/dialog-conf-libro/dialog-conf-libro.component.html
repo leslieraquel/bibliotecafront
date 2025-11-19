@@ -24,6 +24,18 @@
                 </mat-form-field>
             </div>
             <div class="col-md-6">
+                <mat-form-field class="w-100" >
+                <mat-label >editorial</mat-label>
+                  <input required  matInput [(ngModel)]="editorial">
+                </mat-form-field>
+            </div>
+             <div class="col-md-6">
+                <mat-form-field class="w-100" >
+                <mat-label >Año</mat-label>
+                  <input required  matInput [(ngModel)]="year">
+                </mat-form-field>
+            </div>
+            <div class="col-md-6">
             <mat-form-field class="w-100">
             <mat-label>Sinopsis</mat-label>
              <textarea
@@ -68,10 +80,6 @@
 
   <input type="file" id="fileInput" (change)="onFileSelected($event)" accept="application/pdf" />
 </div>
-
-<button (click)="upload()" [disabled]="!selectedFile">
-  Subir archivo
-</button>
         </div>
       </mat-card-content>
     </mat-card>

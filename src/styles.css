@@ -1,4 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
+/* 
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body, html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+} */
+body, html  {
+  background: url('assets/fondo-app.jpg') no-repeat center center fixed;
+  background-color: rgba(112, 18, 18, 0.70); /* rojo oscuro con opacidad */
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}

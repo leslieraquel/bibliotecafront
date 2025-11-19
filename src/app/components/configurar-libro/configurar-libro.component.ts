@@ -86,8 +86,8 @@ export class ConfigurarLibroComponent implements AfterViewInit  {
         this.dataSource.paginator.firstPage();
       }
     }
-    abrirDialogo(modo: 'agregar' | 'editar', paquete?: any): void {
-      console.log(paquete);
+    abrirDialogo(modo: 'agregar' | 'editar', libro?: any): void {
+      console.log(libro);
 
       this.dialog.open(DialogConfLibroComponent, {
         panelClass: 'custom-dialog-container',
@@ -96,7 +96,7 @@ export class ConfigurarLibroComponent implements AfterViewInit  {
           maxWidth: '90%',  // desactivar el maxWidth por defecto
            data: {
         modo: modo,                   // 'agregar' o 'editar'
-        paquete: paquete || {} // si es editar, le pasas el objeto
+        libro: libro || {} // si es editar, le pasas el objeto
       }
       }).afterClosed().subscribe(result => {
             this.cargarPaquetes();

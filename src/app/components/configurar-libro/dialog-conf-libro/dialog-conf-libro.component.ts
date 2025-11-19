@@ -31,7 +31,7 @@ import Swal from 'sweetalert2';
   styleUrl: './dialog-conf-libro.component.css'
 })
 export class DialogConfLibroComponent implements OnInit {
-  selectedFile: File | null = null;
+  public selectedFile: File | null = null;
   isDragOver = false;
 
 
@@ -76,6 +76,8 @@ export class DialogConfLibroComponent implements OnInit {
    idAutor:any;
    title: any;
    isbn: any;
+   editorial: any;
+   year:any;
    estado: any;
    sinopsis: any;
    autorSeleccionado: any;
@@ -85,29 +87,29 @@ export class DialogConfLibroComponent implements OnInit {
     return this.http.get<any[]>(`http://localhost:3000/api/autor/list`);
   }
 
-    ActualizarOregistrarItinerario() {
-  const nuevoLibro = {
-    id: "3",
-    editorial:"manzano",
-    title: this.title,
-    isbn: this.isbn,
-    estado: this.estadoSeleccionado,
-    idAutor:this.autorSeleccionado,
-    sinopsis:   this.sinopsis,
-    year:"2025",
-    archivo:"2025.pdf",
-    createdAt: "2025-11-17T19:10:00Z",
-    updateAt: "2025-11-17T19:10:00Z"
+  ActualizarOregistrarItinerario() {
+    
+  const formData = new FormData();
 
-    // archivo: this.EstadoItinerario
-  };
+  formData.append("title", this.title);
+  formData.append("isbn", this.isbn);
+  formData.append("editorial", this.editorial ?? ""); 
+  formData.append("year", this.year);
+  formData.append("idAutor", this.autorSeleccionado);
+  formData.append("sinopsis", this.sinopsis);
+  formData.append("estado", this.estadoSeleccionado);
+  if (this.selectedFile) {
+    formData.append("archivo", this.selectedFile);
+  }
+  formData.append("createdAt", new Date().toISOString());
+  formData.append("updateAt", new Date().toISOString());
 
   const url = 'http://localhost:3000/api/libro/';
  
   if (this.data.modo === 'agregar') {
-    console.log(nuevoLibro);
-    if(nuevoLibro.title && nuevoLibro.isbn && nuevoLibro.estado && nuevoLibro.idAutor  ){
-      this.http.post(url+'save', nuevoLibro).subscribe({
+    // console.log(nuevoLibro);
+    // if(formData.title && formData.isbn && formData.estado && formData.idAutor  ){
+      this.http.post(url+'libros', formData).subscribe({
       next: (res) => {
         this.cerrarDialog();
         this.limpiarDatos();
@@ -127,37 +129,38 @@ export class DialogConfLibroComponent implements OnInit {
       }
     });
 
-    }else{
-      Swal.fire({
-          icon: 'warning',
-          title: 'Adevertencia',
-          text: 'Llena los campos requeridos',
-          confirmButtonText: 'Aceptar'
-        });
-    }
+    // }else{
+    //   Swal.fire({
+    //       icon: 'warning',
+    //       title: 'Adevertencia',
+    //       text: 'Llena los campos requeridos',
+    //       confirmButtonText: 'Aceptar'
+    //     });
+    // }
 
-  } else if (this.data.modo === 'editar') {
+  } 
+  // else if (this.data.modo === 'editar') {
   
-     this.http.put(`${url}update/${nuevoLibro.title}`, nuevoLibro).subscribe({
+  //    this.http.put(`${url}update/${nuevoLibro.title}`, nuevoLibro).subscribe({
      
-    next: (res) => {
-      this.cerrarDialog();
-      Swal.fire({
-        icon: 'success',
-        title: 'Actualizado!',
-        text: 'El registro fue actualizado exitosamente.',
-        confirmButtonText: 'Aceptar'
-      });
-    },
-    error: (err) => {
-      Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: 'Ocurrió un problema al guardar los datos.',
-      });
-    }
-  });
-  }
+  //   next: (res) => {
+  //     this.cerrarDialog();
+  //     Swal.fire({
+  //       icon: 'success',
+  //       title: 'Actualizado!',
+  //       text: 'El registro fue actualizado exitosamente.',
+  //       confirmButtonText: 'Aceptar'
+  //     });
+  //   },
+  //   error: (err) => {
+  //     Swal.fire({
+  //     icon: 'error',
+  //     title: 'Error',
+  //     text: 'Ocurrió un problema al guardar los datos.',
+  //     });
+  //   }
+  // });
+  // }
 }
 
 
@@ -165,12 +168,13 @@ export class DialogConfLibroComponent implements OnInit {
     console.log('Data recibida en el diálogo:', this.data);
 
     if (this.data.modo === 'editar' && this.data.libro) {
-       const it = this.data.itinerario;
-       this.title = it.nombreItinerario;
-       this.isbn = it.idCategoria;
-       this.estado = it.idNivel;
-       this.sinopsis = it.idItinerario;
-       this.idAutor = it.idAutor;
+       const it = this.data.libro;
+       this.title = it.title;
+       this.isbn = it.isbn;
+       this.estadoSeleccionado = it.estado;
+       this.sinopsis = it.sinopsis;
+       this.autorSeleccionado = it.idAutor;
+       this.selectedFile = it.archivo;
 
     }
     
