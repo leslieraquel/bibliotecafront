@@ -31,6 +31,44 @@ import Swal from 'sweetalert2';
   styleUrl: './dialog-conf-libro.component.css'
 })
 export class DialogConfLibroComponent implements OnInit {
+  selectedFile: File | null = null;
+  isDragOver = false;
+
+
+  onFileSelected(event: any) {
+    this.selectedFile = event.target.files[0];
+  }
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    this.isDragOver = true;
+  }
+
+  onDragLeave(event: DragEvent) {
+    this.isDragOver = false;
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    this.isDragOver = false;
+
+    if (event.dataTransfer?.files.length) {
+      this.selectedFile = event.dataTransfer.files[0];
+    }
+  }
+
+    upload() {
+    if (!this.selectedFile) return;
+
+    const formData = new FormData();
+    formData.append("archivo", this.selectedFile);
+
+    this.http.post("http://localhost:3000/libros", formData)
+      .subscribe({
+        next: res => console.log("Subido", res),
+        error: err => console.error(err)
+      });
+  }
 
 
   constructor (public dialog: MatDialog,private http: HttpClient, @Inject(MAT_DIALOG_DATA) public data: any){}

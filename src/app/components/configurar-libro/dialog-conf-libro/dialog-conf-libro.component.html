@@ -2,7 +2,7 @@
     <div class="col-md-12 dialog-container">
         <div style=" background-color:  #0e6cc9; color:white" class="mat-dialog-header p-3 d-flex justify-content-between align-items-center border-bottom">
         <h5 class="mb-0">
-          {{ data.modo === 'agregar' ? 'Agregar' : 'Actualizar' }} Itinerario
+          {{ data.modo === 'agregar' ? 'Agregar' : 'Actualizar' }} Libro
         </h5>
         <button mat-icon-button (click)="dialog.closeAll()">
           <mat-icon style="color: white;">close</mat-icon>
@@ -30,7 +30,7 @@
              matInput
              required
              rows="4"
-             [(ngModel)]="isbn">
+             [(ngModel)]="sinopsis">
             </textarea>
             </mat-form-field>
             </div>
@@ -53,6 +53,25 @@
                 </mat-select>
                 </mat-form-field>
             </div>
+            <div 
+  class="dropzone"
+  (dragover)="onDragOver($event)"
+  (dragleave)="onDragLeave($event)"
+  (drop)="onDrop($event)"
+  [class.dragover]="isDragOver"
+>
+  <p *ngIf="!selectedFile">Arrastra tu PDF aquí o haz clic para subir</p>
+
+  <p *ngIf="selectedFile">
+    Archivo seleccionado: <strong>{{ selectedFile.name }}</strong>
+  </p>
+
+  <input type="file" id="fileInput" (change)="onFileSelected($event)" accept="application/pdf" />
+</div>
+
+<button (click)="upload()" [disabled]="!selectedFile">
+  Subir archivo
+</button>
         </div>
       </mat-card-content>
     </mat-card>
