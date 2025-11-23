@@ -24,3 +24,19 @@
   height: 100%;
   cursor: pointer;
 }
+
+.btn-remove {
+  background-color: #c62828;
+  border: none;
+  color: white;
+  font-size: 18px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-remove:hover {
+  background-color: #8e0000;
+}

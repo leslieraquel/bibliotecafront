@@ -32,30 +32,33 @@ import Swal from 'sweetalert2';
 })
 export class DialogConfLibroComponent implements OnInit {
   public selectedFile: File | null = null;
+  public archivoUrl: string | null = null; 
   isDragOver = false;
+  idlibro:string="";
 
 
-  onFileSelected(event: any) {
-    this.selectedFile = event.target.files[0];
-  }
+ onFileSelected(event: any) {
+  this.selectedFile = event.target.files[0];
+  this.archivoUrl = null; // Si elige uno nuevo, se elimina el antiguo
+}
 
-  onDragOver(event: DragEvent) {
-    event.preventDefault();
-    this.isDragOver = true;
-  }
-
-  onDragLeave(event: DragEvent) {
-    this.isDragOver = false;
-  }
-
+  
+onDragOver(event: DragEvent) {
+  event.preventDefault();
+  this.isDragOver = true;
+}
+onDragLeave(event: DragEvent) {
+  this.isDragOver = false;
+}
   onDrop(event: DragEvent) {
-    event.preventDefault();
-    this.isDragOver = false;
+  event.preventDefault();
+  this.isDragOver = false;
 
-    if (event.dataTransfer?.files.length) {
-      this.selectedFile = event.dataTransfer.files[0];
-    }
+  if (event.dataTransfer?.files.length) {
+    this.selectedFile = event.dataTransfer.files[0];
+    this.archivoUrl = null; // Se elimina archivo previo si arrastra uno nuevo
   }
+}
 
     upload() {
     if (!this.selectedFile) return;
@@ -69,6 +72,11 @@ export class DialogConfLibroComponent implements OnInit {
         error: err => console.error(err)
       });
   }
+removeFile(event: Event) {
+  event.stopPropagation(); // para que no abra el file input al hacer clic en X
+  this.selectedFile = null;
+  this.archivoUrl = null;
+}
 
 
   constructor (public dialog: MatDialog,private http: HttpClient, @Inject(MAT_DIALOG_DATA) public data: any){}
@@ -98,6 +106,8 @@ export class DialogConfLibroComponent implements OnInit {
   formData.append("idAutor", this.autorSeleccionado);
   formData.append("sinopsis", this.sinopsis);
   formData.append("estado", this.estadoSeleccionado);
+  formData.append("id", this.idlibro);
+
   if (this.selectedFile) {
     formData.append("archivo", this.selectedFile);
   }
@@ -139,28 +149,31 @@ export class DialogConfLibroComponent implements OnInit {
     // }
 
   } 
-  // else if (this.data.modo === 'editar') {
+  else if (this.data.modo === 'editar') {
+    if (!this.selectedFile && this.archivoUrl) {
+    formData.append("archivoActual", this.archivoUrl);  // ✔ SE ENVÍA
+  }
   
-  //    this.http.put(`${url}update/${nuevoLibro.title}`, nuevoLibro).subscribe({
-     
-  //   next: (res) => {
-  //     this.cerrarDialog();
-  //     Swal.fire({
-  //       icon: 'success',
-  //       title: 'Actualizado!',
-  //       text: 'El registro fue actualizado exitosamente.',
-  //       confirmButtonText: 'Aceptar'
-  //     });
-  //   },
-  //   error: (err) => {
-  //     Swal.fire({
-  //     icon: 'error',
-  //     title: 'Error',
-  //     text: 'Ocurrió un problema al guardar los datos.',
-  //     });
-  //   }
-  // });
-  // }
+    this.http.put(`${url}update/${this.idlibro}`, formData).subscribe({
+      next: (res) => {
+        this.cerrarDialog();
+      Swal.fire({
+        icon: 'success',
+        title: 'Actualizado!',
+        text: 'El registro fue actualizado exitosamente.',
+        confirmButtonText: 'Aceptar'
+      });
+      console.log(formData);
+    },
+    error: (err) => {
+      Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Ocurrió un problema al guardar los datos.',
+      });
+    }
+  });
+  }
 }
 
 
@@ -168,13 +181,20 @@ export class DialogConfLibroComponent implements OnInit {
     console.log('Data recibida en el diálogo:', this.data);
 
     if (this.data.modo === 'editar' && this.data.libro) {
-       const it = this.data.libro;
+      const it = this.data.libro;
+      console.log(it.id);
        this.title = it.title;
        this.isbn = it.isbn;
        this.estadoSeleccionado = it.estado;
        this.sinopsis = it.sinopsis;
        this.autorSeleccionado = it.idAutor;
        this.selectedFile = it.archivo;
+       this.editorial = it.editorial;
+       this.year = it.year;
+       this.archivoUrl = it.archivo;
+       this.selectedFile = null;
+       this.idlibro = it.id;
+       
 
     }
     

@@ -65,20 +65,43 @@
                 </mat-select>
                 </mat-form-field>
             </div>
-            <div 
+ <div 
   class="dropzone"
   (dragover)="onDragOver($event)"
   (dragleave)="onDragLeave($event)"
   (drop)="onDrop($event)"
   [class.dragover]="isDragOver"
+  (click)="fileInput.click()"
 >
-  <p *ngIf="!selectedFile">Arrastra tu PDF aquí o haz clic para subir</p>
 
-  <p *ngIf="selectedFile">
-    Archivo seleccionado: <strong>{{ selectedFile.name }}</strong>
+  <!-- MENSAJE SI NO HAY ARCHIVO -->
+  <p *ngIf="!selectedFile && !archivoUrl">
+    Arrastra tu PDF aquí o haz clic para subir
   </p>
 
-  <input type="file" id="fileInput" (change)="onFileSelected($event)" accept="application/pdf" />
+  <!-- VISTA PREVIA DEL ARCHIVO EXISTENTE (URL DEL BACKEND) -->
+  <div *ngIf="archivoUrl && !selectedFile" class="file-preview">
+    <span>{{ archivoUrl | slice:-30 }}</span>
+
+    <button class="btn-remove" (click)="removeFile($event)">✕</button>
+  </div>
+
+  <!-- VISTA PREVIA DEL ARCHIVO NUEVO -->
+  <div *ngIf="selectedFile" class="file-preview">
+    <span>{{ selectedFile.name }}</span>
+
+    <button class="btn-remove" (click)="removeFile($event)">✕</button>
+  </div>
+
+  <!-- INPUT REAL OCULTO -->
+  <input 
+    #fileInput
+    type="file" 
+    (change)="onFileSelected($event)"
+    accept="application/pdf"
+    style="display:none"
+  />
+
 </div>
         </div>
       </mat-card-content>
