@@ -12,6 +12,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+ // extraer dialog para boton nuevo
+import { DialogConfUsuarioComponent } from './dialog-conf-usuario/dialog-conf-usuario.component';
 
 export interface UserData {
   ci: string;
@@ -44,7 +46,7 @@ export interface UserData {
   templateUrl: './usuario.component.html',
   styleUrl: './usuario.component.css'
 })
-export class UsuarioComponent implements AfterViewInit  {
+export class ConfigurarUsuarioComponent  implements AfterViewInit  {
 
   mostrarCard: boolean = false;
   displayedColumns: string[] = ['ci', 'name', 'email', 'type', 'acciones'];
@@ -56,11 +58,13 @@ export class UsuarioComponent implements AfterViewInit  {
   @ViewChild(MatSort) sort!: MatSort;
 
   ngAfterViewInit() {
-    this.cargarUsuarios();
+    // this.dataSource.paginator = this.paginator;
+      // this.dataSource.sort = this.sort;
+    this.cargarUsuarios(); 
   }
 
   cargarUsuarios() {
-    this.http.get<UserData[]>('http://localhost:3000/api/usuario/list')
+    this.http.get<UserData[]>('http://localhost:3000/api/users/list')
       .subscribe(data => {
         console.log(data);
         this.dataSource.data = data;
@@ -78,13 +82,14 @@ export class UsuarioComponent implements AfterViewInit  {
     }
   }
 
-  abrirDialogo(modo: 'agregar' | 'actualizar', usuario?: any): void {
+  abrirDialogo(modo: 'agregar' | 'editar', usuario?: any): void {
     console.log(usuario);
 
-    this.dialog.open(UsuarioComponent, {
+    this.dialog.open(DialogConfUsuarioComponent, {
       panelClass: 'custom-dialog-container',
-      width: '600px',
-      maxWidth: '90%',
+      width: '95%',   // 90% del ancho del viewport padre (ventana)
+      height: '85%',  // 80% del alto del viewport padre
+      maxWidth: '90%',  // desactivar el maxWidth por defecto
       data: {
         modo: modo,
         usuario: usuario || null
@@ -93,7 +98,7 @@ export class UsuarioComponent implements AfterViewInit  {
       this.cargarUsuarios();
     });
   }
-
+/*
   eliminarUsuario(usuario: UserData): void {
     if (confirm(`¿Está seguro que desea eliminar al usuario ${usuario.name}?`)) {
       this.http.delete(`http://localhost:3000/api/usuario/delete/${usuario.ci}`)
@@ -108,5 +113,5 @@ export class UsuarioComponent implements AfterViewInit  {
           }
         });
     }
-  }
+  }*/
 }

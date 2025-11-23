@@ -12,7 +12,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
+import { DialogConfAutorComponent } from './dialog-conf-autor/dialog-conf-autor.component';
 export interface AutorData {
   id: string;
   name: string;
@@ -77,22 +77,23 @@ export class AutorComponent implements AfterViewInit  {
     }
   }
 
-  abrirDialogo(modo: 'agregar' | 'actualizar', autor?: any): void {
+  abrirDialogo(modo: 'agregar' | 'editar', autor?: any): void {
     console.log(autor);
 
-    this.dialog.open(AutorComponent, {
+    this.dialog.open(DialogConfAutorComponent, {
       panelClass: 'custom-dialog-container',
-      width: '600px',
-      maxWidth: '90%',
+      width: '95%',   // 90% del ancho del viewport padre (ventana)
+      height: '85%',  // 80% del alto del viewport padre
+      maxWidth: '90%',  // desactivar el maxWidth por defecto
       data: {
         modo: modo,
-        usuario: autor || null
+        autor: autor || null
       }
     }).afterClosed().subscribe(result => {
       this.cargarAutores();
     });
   }
-
+/*
   eliminarAutor(autor: AutorData): void {
     if (confirm(`¿Está seguro que desea eliminar al autor ${autor.name}?`)) {
       this.http.delete(`http://localhost:3000/api/autor/delete/${autor.id}`)
@@ -107,6 +108,6 @@ export class AutorComponent implements AfterViewInit  {
           }
         });
     }
-  }
+  }*/
 }
 

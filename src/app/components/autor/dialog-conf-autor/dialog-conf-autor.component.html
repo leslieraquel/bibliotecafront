@@ -1,4 +1,3 @@
-<p>dialog-conf-autor works!</p>
 <div class="row">
     <div class="col-md-12 dialog-container">
         <div style="background-color: #0e6cc9; color: white" class="mat-dialog-header p-3 d-flex justify-content-between align-items-center border-bottom">
@@ -38,24 +37,7 @@
                         </mat-form-field>
                     </div>
 
-                    <!-- Fecha de Creación (solo en actualizar) -->
-                    <div class="col-md-6" *ngIf="data.modo === 'actualizar'">
-                        <mat-form-field class="w-100">
-                            <mat-label>Fecha de Creación</mat-label>
-                            <input matInput [value]="createdAt | date:'medium'" readonly>
-                        </mat-form-field>
-                    </div>
-
-                    <!-- Fecha de Actualización (solo en actualizar) -->
-                    <div class="col-md-6" *ngIf="data.modo === 'actualizar'">
-                        <mat-form-field class="w-100">
-                            <mat-label>Fecha de Actualización</mat-label>
-                            <input matInput [value]="updatedAt | date:'medium'" readonly>
-                        </mat-form-field>
-                    </div>
-                </div>
-            </mat-card-content>
-        </mat-card>
+          
 
         <mat-card-actions class="p-3 border-top d-flex justify-content-end">
             <button class="me-4" mat-flat-button (click)="ActualizarOregistrarAutor()">
@@ -64,4 +46,3 @@
             <button mat-stroked-button (click)="dialog.closeAll()">Cancelar</button>
         </mat-card-actions>
     </div>
-</div>
