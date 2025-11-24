@@ -38,9 +38,18 @@
             <div class="col-md-6">
                 <mat-form-field class="w-100">
                     <mat-label>Estado</mat-label>
-                <mat-select required [(ngModel)]="typeSelect">
+                <mat-select required [(ngModel)]="type">
                     <mat-option value="activo">Activo</mat-option>
                     <mat-option value="inactivo">Inactivo</mat-option>
+                </mat-select>
+                </mat-form-field>
+            </div>
+             <div class="col-md-6">
+                <mat-form-field class="w-100">
+                    <mat-label>Tipo de Usuario</mat-label>
+                <mat-select required [(ngModel)]="typeperfil">
+                    <mat-option value="administrador">Administrador</mat-option>
+                    <mat-option value="estudiante">Estudiante</mat-option>
                 </mat-select>
                 </mat-form-field>
             </div>

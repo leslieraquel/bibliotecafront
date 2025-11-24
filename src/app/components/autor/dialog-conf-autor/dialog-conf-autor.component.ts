@@ -49,7 +49,6 @@ export class DialogConfAutorComponent implements OnInit {
     private http: HttpClient, 
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
-
   // Variables del formulario para autor
   id: any;
   name: any;
@@ -66,6 +65,21 @@ export class DialogConfAutorComponent implements OnInit {
 
   console.log(nuevoAutor);
 
+  if (!this.id?.trim()) {
+    Swal.fire('Error', 'El ID es requerido', 'warning');
+    return;
+  }
+
+
+  if (!this.name?.trim()) {
+    Swal.fire('Error', 'El nombre es requerido', 'warning');
+    return;
+  }
+
+  if (!this.bio?.trim()) {
+    Swal.fire('Error', 'El email es requerido', 'warning');
+    return;
+  }
   if (this.data.modo === 'editar') {
     // Usar PUT para actualizar
     this.http.put(url + 'update', nuevoAutor).subscribe({

@@ -82,9 +82,8 @@ export class AutorComponent implements AfterViewInit  {
 
     this.dialog.open(DialogConfAutorComponent, {
       panelClass: 'custom-dialog-container',
-      width: '95%',   // 90% del ancho del viewport padre (ventana)
-      height: '85%',  // 80% del alto del viewport padre
-      maxWidth: '90%',  // desactivar el maxWidth por defecto
+     width: '95%',   // 90% del ancho del viewport padre (ventana)
+      height: '50%',  // 80% del alto del viewport padre
       data: {
         modo: modo,
         autor: autor || null

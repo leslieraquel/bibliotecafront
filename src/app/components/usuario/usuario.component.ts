@@ -18,6 +18,7 @@ import { DialogConfUsuarioComponent } from './dialog-conf-usuario/dialog-conf-us
 export interface UserData {
   ci: string;
   type: string;
+  typeperfil:string;
   name: string;
   email: string;
   createdAt: string;
@@ -49,7 +50,7 @@ export interface UserData {
 export class ConfigurarUsuarioComponent  implements AfterViewInit  {
 
   mostrarCard: boolean = false;
-  displayedColumns: string[] = ['ci', 'name', 'email', 'type', 'acciones'];
+  displayedColumns: string[] = ['ci','type', 'typeperfil','name', 'email', 'acciones'];
   dataSource = new MatTableDataSource<UserData>();
 
   constructor(private http: HttpClient, public dialog: MatDialog) {}
@@ -58,20 +59,27 @@ export class ConfigurarUsuarioComponent  implements AfterViewInit  {
   @ViewChild(MatSort) sort!: MatSort;
 
   ngAfterViewInit() {
-    // this.dataSource.paginator = this.paginator;
-      // this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+     this.dataSource.sort = this.sort;
     this.cargarUsuarios(); 
   }
 
-  cargarUsuarios() {
-    this.http.get<UserData[]>('http://localhost:3000/api/users/list')
-      .subscribe(data => {
-        console.log(data);
-        this.dataSource.data = data;
-      }, error => {
-        console.error('Error al cargar usuarios:', error);
+ cargarUsuarios() {
+  this.http.get<UserData[]>('http://localhost:3000/api/users/list')
+    .subscribe(data => {
+      // Corrección temporal: si typeperfil es 'activo' o 'inactivo', cambiarlo a un valor por defecto
+      const datosCorregidos = data.map(usuario => {
+        // Si typeperfil no es 'administrador' ni 'estudiante', entonces asignar 'estudiante' por defecto
+        if (usuario.typeperfil !== 'administrador' && usuario.typeperfil !== 'estudiante') {
+          usuario.typeperfil = 'estudiante';
+        }
+        return usuario;
       });
-  }
+      this.dataSource.data = datosCorregidos;
+    }, error => {
+      console.error('Error al cargar usuarios:', error);
+    });
+}
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -88,8 +96,7 @@ export class ConfigurarUsuarioComponent  implements AfterViewInit  {
     this.dialog.open(DialogConfUsuarioComponent, {
       panelClass: 'custom-dialog-container',
       width: '95%',   // 90% del ancho del viewport padre (ventana)
-      height: '85%',  // 80% del alto del viewport padre
-      maxWidth: '90%',  // desactivar el maxWidth por defecto
+      height: '50%',  // 80% del alto del viewport padre
       data: {
         modo: modo,
         usuario: usuario || null
