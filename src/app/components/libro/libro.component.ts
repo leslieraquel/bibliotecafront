@@ -64,8 +64,42 @@ export class LibroComponent implements AfterViewInit  {
     this.datosFiltrados = this.datos.filter(item =>
       item.titulo.toLowerCase().includes(texto) ||
       item.autor.toLowerCase().includes(texto) ||
-      item.categoria.toLowerCase().includes(texto)
+      item.categoria.toLowerCase().includes(texto) ||
+      item.id.toLowerCase().includes(texto)
+
     );
   }
+  descargarPDF(id: string) {
+  this.http.get(`http://localhost:3000/api/libro/descargarPDF/${id}`, {
+    responseType: 'blob'
+  }).subscribe({
+    next: (blob: Blob) => {
+      console.log("BLOB RECIBIDO:", blob);
 
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "archivo.pdf";
+      a.click();
+
+      window.URL.revokeObjectURL(url);
+    },
+    error: (err) => {
+      console.log("ERROR ANGULAR", err);
+    }
+  });
+}
+verPDF(id: string) {
+  this.http.get(`http://localhost:3000/api/libro/descargarPDF/${id}`, {
+    responseType: 'blob'
+  }).subscribe({
+    next: (blob: Blob) => {
+      const fileURL = URL.createObjectURL(blob);
+      window.open(fileURL, '_blank');
+    },
+    error: err => console.error("ERROR", err)
+  });
+}
+
+  
 }

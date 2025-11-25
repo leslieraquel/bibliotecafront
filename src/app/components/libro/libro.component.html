@@ -21,8 +21,14 @@
       </mat-card-content>
 
       <mat-card-actions class="card-actions">
-        <button mat-raised-button color="warn" class="action-btn">Leer</button>
-        <button mat-raised-button color="warn" class="action-btn">PDF</button>
+        <button mat-raised-button color="warn" class="action-btn"
+         class="action-btn"
+  (click)="verPDF(item.id)">Leer</button>
+        <button mat-raised-button color="warn" 
+  class="action-btn"
+  (click)="descargarPDF(item.id)">
+  PDF
+</button>
       </mat-card-actions>
 
     </mat-card>

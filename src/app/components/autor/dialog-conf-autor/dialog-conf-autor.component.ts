@@ -15,12 +15,6 @@ import { Inject } from '@angular/core';
 import Swal from 'sweetalert2';
 
 
-export interface AutorData {
-  id: string;
-  name: string;
-  bio: string;
-}
-
 @Component({
   selector: 'app-dialog-conf-autor',
   standalone: true,
@@ -58,17 +52,12 @@ export class DialogConfAutorComponent implements OnInit {
   const url = 'http://localhost:3000/api/autor/';
 
   let nuevoAutor = {
-    id: this.id,
+ 
     name: this.name,
     bio: this.bio
   };
 
   console.log(nuevoAutor);
-
-  if (!this.id?.trim()) {
-    Swal.fire('Error', 'El ID es requerido', 'warning');
-    return;
-  }
 
 
   if (!this.name?.trim()) {
