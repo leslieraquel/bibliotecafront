@@ -23,7 +23,6 @@ export interface UserData {
   name: string;
   email: string;
   password: string;
-
 }
 
 @Component({
@@ -74,8 +73,80 @@ export class DialogConfUsuarioComponent implements OnInit {
   cedulaChecking = false;
   cedulaExists = false;
   cedulaValid = true;
+  cedulaOriginal: string = '';
+  
+  // Variables para validación de nombre único
+  nombreChecking = false;
+  nombreExists = false;
+  nombreValid = true;
+  nombreOriginal: string = '';
+  
+  // Variables para validación de formato
+  nombreInvalid = false;
+  emailInvalid = false;
+  passwordInvalid = false;
 
-  // Validar cédula en tiempo real
+  // MÉTODO PARA VALIDAR NOMBRE EN TIEMPO REAL
+  validateNombre(): void {
+    if (!this.name) {
+      this.nombreExists = false;
+      this.nombreValid = true;
+      this.nombreInvalid = false;
+      return;
+    }
+
+    // Validar formato primero
+    if (!this.NOMBRE_REGEX.test(this.name)) {
+      this.nombreValid = false;
+      this.nombreExists = false;
+      this.nombreInvalid = true;
+      return;
+    }
+
+    this.nombreValid = true;
+    this.nombreInvalid = false;
+    
+    // No validar si estamos en modo edición y el nombre no ha cambiado
+    if (this.data.modo === 'editar' && this.name === this.nombreOriginal) {
+      this.nombreExists = false;
+      return;
+    }
+
+    this.nombreChecking = true;
+
+    // Llamar al backend para verificar si el nombre existe
+    const nombreCodificado = encodeURIComponent(this.name.trim());
+    this.http.get<{ exists: boolean }>(`http://localhost:3000/api/users/check-name/${nombreCodificado}`)
+      .subscribe({
+        next: (response) => {
+          this.nombreChecking = false;
+          this.nombreExists = response.exists;
+          
+          if (this.nombreExists) {
+            this.mostrarMensajeNombreDuplicado();
+          }
+        },
+        error: (error) => {
+          this.nombreChecking = false;
+          console.error('Error al verificar nombre:', error);
+        }
+      });
+  }
+
+  private mostrarMensajeNombreDuplicado(): void {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Nombre duplicado',
+      text: 'El nombre ingresado ya está registrado en el sistema.',
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true
+    });
+  }
+
+  // VALIDAR CÉDULA EN TIEMPO REAL
   validateCedula(): void {
     if (!this.ci) {
       this.cedulaExists = false;
@@ -93,7 +164,7 @@ export class DialogConfUsuarioComponent implements OnInit {
     this.cedulaValid = true;
     
     // No validar si estamos en modo edición y la cédula no ha cambiado
-    if (this.data.modo === 'editar' && this.ci === this.data.usuario.ci) {
+    if (this.data.modo === 'editar' && this.ci === this.cedulaOriginal) {
       this.cedulaExists = false;
       return;
     }
@@ -104,21 +175,62 @@ export class DialogConfUsuarioComponent implements OnInit {
     this.http.get<{ exists: boolean }>(`http://localhost:3000/api/users/check-ci/${this.ci}`)
       .subscribe({
         next: (response) => {
+          this.cedulaChecking = false;
           this.cedulaExists = response.exists;
-          this.cedulaChecking = false;
+          
+          // Mostrar mensaje inmediato si la cédula ya existe
+          if (this.cedulaExists) {
+            this.mostrarMensajeCedulaDuplicada();
+          }
         },
-        error: () => {
+        error: (error) => {
           this.cedulaChecking = false;
-          // En caso de error, no mostramos como duplicado para no bloquear al usuario
+          console.error('Error al verificar cédula:', error);
+          Swal.fire({
+            icon: 'warning',
+            title: 'Advertencia',
+            text: 'No se pudo verificar la cédula. Por favor, intente nuevamente.',
+            confirmButtonText: 'Aceptar'
+          });
         }
       });
   }
 
-  // MÉTODO DE VALIDACIÓN MEJORADO
+  private mostrarMensajeCedulaDuplicada(): void {
+    Swal.fire({
+      icon: 'error',
+      title: 'Cédula duplicada',
+      text: 'La cédula ingresada ya está registrada en el sistema. Por favor, ingrese una cédula diferente.',
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 4000,
+      timerProgressBar: true
+    });
+  }
+
+  // MÉTODOS DE VALIDACIÓN DE FORMATO
+  validateEmail(): void {
+    if (!this.email) {
+      this.emailInvalid = false;
+      return;
+    }
+    this.emailInvalid = !this.EMAIL_REGEX.test(this.email);
+  }
+
+  validatePassword(): void {
+    if (!this.password) {
+      this.passwordInvalid = false;
+      return;
+    }
+    this.passwordInvalid = this.password.length < 6;
+  }
+
+  // MÉTODO DE VALIDACIÓN COMPLETO
   validarCampos(): boolean {
     // Validar CI - Requerido
     if (!this.ci?.trim()) {
-      Swal.fire('Error', 'El CI es requerido', 'warning');
+      Swal.fire('Error', 'La cédula es requerida', 'warning');
       return false;
     }
 
@@ -128,20 +240,39 @@ export class DialogConfUsuarioComponent implements OnInit {
       return false;
     }
 
-    // Validar si la cédula ya existe (solo para nuevo usuario o cuando cambia la cédula)
+    // Validar si la cédula ya existe
     if (this.cedulaExists) {
       Swal.fire('Error', 'La cédula ya está registrada en el sistema', 'warning');
       return false;
     }
 
-    // Validar nombre
+    // Si está verificando la cédula, esperar
+    if (this.cedulaChecking) {
+      Swal.fire('Espere', 'Verificando cédula, por favor espere...', 'info');
+      return false;
+    }
+
+    // Validar nombre - Requerido
     if (!this.name?.trim()) {
       Swal.fire('Error', 'El nombre es requerido', 'warning');
       return false;
     }
 
+    // Validar formato nombre
     if (!this.NOMBRE_REGEX.test(this.name)) {
       Swal.fire('Error', 'El nombre solo debe contener letras y espacios (2-50 caracteres)', 'warning');
+      return false;
+    }
+
+    // Validar si el nombre ya existe
+    if (this.nombreExists) {
+      Swal.fire('Error', 'El nombre ya está registrado en el sistema', 'warning');
+      return false;
+    }
+
+    // Si está verificando el nombre, esperar
+    if (this.nombreChecking) {
+      Swal.fire('Espere', 'Verificando nombre, por favor espere...', 'info');
       return false;
     }
 
@@ -177,9 +308,21 @@ export class DialogConfUsuarioComponent implements OnInit {
     return true;
   }
 
+  // MÉTODO PRINCIPAL PARA GUARDAR O ACTUALIZAR
   ActualizarOregistrarUsuario() {
     // Primero validar todos los campos
     if (!this.validarCampos()) {
+      return;
+    }
+
+    // Validación adicional antes de guardar
+    if (this.cedulaExists) {
+      Swal.fire('Error', 'No se puede guardar. La cédula ingresada ya existe en el sistema.', 'error');
+      return;
+    }
+
+    if (this.nombreExists) {
+      Swal.fire('Error', 'No se puede guardar. El nombre ingresado ya existe en el sistema.', 'error');
       return;
     }
 
@@ -198,7 +341,7 @@ export class DialogConfUsuarioComponent implements OnInit {
 
     if (this.data.modo === 'editar') {
       // Usar el CI original para la actualización
-      const ciOriginal = this.data.usuario.ci;
+      const ciOriginal = this.cedulaOriginal;
       
       this.http.put(`${url}update/${ciOriginal}`, nuevoUsuario).subscribe({
         next: (res) => {
@@ -211,13 +354,32 @@ export class DialogConfUsuarioComponent implements OnInit {
           });
         },
         error: (err) => {
-          // MOSTRAR ERROR ESPECÍFICO DEL BACKEND
-          const errorMessage = err.error?.error || err.error?.message || 'Ocurrió un problema al actualizar los datos.';
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: errorMessage,
-          });
+          // Manejar específicamente error de cédula duplicada del backend
+          if (err.status === 409 || err.error?.message?.includes('cédula') || err.error?.message?.includes('duplicad')) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Cédula duplicada',
+              text: 'La cédula ya existe en el sistema. Por favor, ingrese una cédula diferente.',
+            });
+            this.cedulaExists = true;
+          } 
+          // Manejar error de nombre duplicado del backend
+          else if (err.error?.message?.includes('nombre') && err.error?.message?.includes('registrado')) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Nombre duplicado',
+              text: 'El nombre ya existe en el sistema. Por favor, ingrese un nombre diferente.',
+            });
+            this.nombreExists = true;
+          }
+          else {
+            const errorMessage = err.error?.error || err.error?.message || 'Ocurrió un problema al actualizar los datos.';
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: errorMessage,
+            });
+          }
         },
       });
 
@@ -234,13 +396,32 @@ export class DialogConfUsuarioComponent implements OnInit {
           });
         },
         error: (err) => {
-          // MOSTRAR ERROR ESPECÍFICO DEL BACKEND
-          const errorMessage = err.error?.error || err.error?.message || 'Ocurrió un problema al guardar los datos.';
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: errorMessage,
-          });
+          // Manejar específicamente error de cédula duplicada del backend
+          if (err.status === 409 || err.error?.message?.includes('cédula') || err.error?.message?.includes('duplicad')) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Cédula duplicada',
+              text: 'La cédula ya existe en el sistema. Por favor, ingrese una cédula diferente.',
+            });
+            this.cedulaExists = true;
+          } 
+          // Manejar error de nombre duplicado del backend
+          else if (err.error?.message?.includes('nombre') && err.error?.message?.includes('registrado')) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Nombre duplicado',
+              text: 'El nombre ya existe en el sistema. Por favor, ingrese un nombre diferente.',
+            });
+            this.nombreExists = true;
+          }
+          else {
+            const errorMessage = err.error?.error || err.error?.message || 'Ocurrió un problema al guardar los datos.';
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: errorMessage,
+            });
+          }
         }
       });
     }
@@ -259,13 +440,21 @@ export class DialogConfUsuarioComponent implements OnInit {
       this.email = usuario.email;
       this.password = usuario.password || '';
       
-      // Inicializar como no duplicado ya que es la cédula actual del usuario
+      // Guardar valores originales para validación
+      this.cedulaOriginal = usuario.ci;
+      this.nombreOriginal = usuario.name;
+      
+      // Inicializar como no duplicados
       this.cedulaExists = false;
       this.cedulaValid = true;
+      this.nombreExists = false;
+      this.nombreValid = true;
     } else {
       // Valores por defecto para nuevo usuario
       this.type = 'activo';
       this.typeperfil = 'estudiante';
+      this.cedulaOriginal = '';
+      this.nombreOriginal = '';
     }
   }
 
@@ -278,6 +467,10 @@ export class DialogConfUsuarioComponent implements OnInit {
     this.password = '';
     this.cedulaExists = false;
     this.cedulaValid = true;
+    this.nombreExists = false;
+    this.nombreValid = true;
+    this.cedulaOriginal = '';
+    this.nombreOriginal = '';
   }
 
   cerrarDialog() {

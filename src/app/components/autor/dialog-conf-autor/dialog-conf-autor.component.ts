@@ -66,7 +66,7 @@ export class DialogConfAutorComponent implements OnInit {
   }
 
   if (!this.bio?.trim()) {
-    Swal.fire('Error', 'El email es requerido', 'warning');
+    Swal.fire('Error', 'La Biografica  es requerido', 'warning');
     return;
   }
   if (this.data.modo === 'editar') {

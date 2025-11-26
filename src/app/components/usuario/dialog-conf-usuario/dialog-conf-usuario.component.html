@@ -12,33 +12,152 @@
       <mat-card-content>
         <div class="row">
             <div class="col-md-6">
-                <mat-form-field class="w-100" >
-                <mat-label>Nombre completo</mat-label>
-                  <input required matInput [(ngModel)]="name">
+                <mat-form-field class="w-100">
+                    <mat-label>Nombre completo</mat-label>
+                    <input 
+                        required 
+                        matInput 
+                        [(ngModel)]="name" 
+                        name="name"
+                        (blur)="validateNombre()"
+                        (input)="validateNombre()"
+                        [class.is-invalid]="nombreExists || nombreInvalid"
+                        [class.is-valid]="nombreValid && !nombreExists && name && !nombreChecking">
+                    
+                    <!-- Spinner de carga -->
+                    <mat-progress-spinner 
+                        *ngIf="nombreChecking"
+                        matSuffix
+                        diameter="20"
+                        mode="indeterminate">
+                    </mat-progress-spinner>
+                    
+                    <!-- Icono de éxito -->
+                    <mat-icon 
+                        *ngIf="!nombreChecking && nombreValid && !nombreExists && name" 
+                        matSuffix 
+                        color="primary">
+                        check_circle
+                    </mat-icon>
+                    
+                    <!-- Icono de error -->
+                    <mat-icon 
+                        *ngIf="!nombreChecking && nombreExists" 
+                        matSuffix 
+                        color="warn">
+                        error
+                    </mat-icon>
                 </mat-form-field>
+                
+                <!-- Mensajes de validación de nombre -->
+                <div class="validation-messages mt-2">
+                    <div *ngIf="nombreChecking" class="text-info small">
+                        <mat-icon class="me-1" style="font-size: 14px; vertical-align: middle;">schedule</mat-icon>
+                        Verificando nombre...
+                    </div>
+                    <div *ngIf="nombreInvalid" class="text-danger small">
+                        <mat-icon class="me-1" style="font-size: 14px; vertical-align: middle;">error</mat-icon>
+                        El nombre solo debe contener letras y espacios (2-50 caracteres)
+                    </div>
+                    <div *ngIf="nombreExists" class="text-danger small">
+                        <mat-icon class="me-1" style="font-size: 14px; vertical-align: middle;">cancel</mat-icon>
+                        Este nombre ya está registrado en el sistema
+                    </div>
+                    <div *ngIf="nombreValid && !nombreExists && name && !nombreChecking" class="text-success small">
+                        <mat-icon class="me-1" style="font-size: 14px; vertical-align: middle;">check_circle</mat-icon>
+                        Nombre válido y disponible
+                    </div>
+                </div>
             </div>
             <div class="col-md-6">
-                <mat-form-field class="w-100" >
-                <mat-label>Cédula de Identidad</mat-label>
-                  <input required matInput [(ngModel)]="ci">
+                <mat-form-field class="w-100">
+                    <mat-label>Cédula de Identidad</mat-label>
+                    <input 
+                        required 
+                        matInput 
+                        [(ngModel)]="ci" 
+                        name="ci"
+                        (blur)="validateCedula()"
+                        (input)="validateCedula()"
+                        maxlength="10"
+                        [class.is-invalid]="cedulaExists || !cedulaValid"
+                        [class.is-valid]="cedulaValid && !cedulaExists && ci && !cedulaChecking">
+                    
+                    <!-- Spinner de carga -->
+                    <mat-progress-spinner 
+                        *ngIf="cedulaChecking"
+                        matSuffix
+                        diameter="20"
+                        mode="indeterminate">
+                    </mat-progress-spinner>
+                    
+                    <!-- Icono de éxito -->
+                    <mat-icon 
+                        *ngIf="!cedulaChecking && cedulaValid && !cedulaExists && ci" 
+                        matSuffix 
+                        color="primary">
+                        check_circle
+                    </mat-icon>
+                    
+                    <!-- Icono de error -->
+                    <mat-icon 
+                        *ngIf="!cedulaChecking && cedulaExists" 
+                        matSuffix 
+                        color="warn">
+                        error
+                    </mat-icon>
                 </mat-form-field>
+                
+                <!-- Mensajes de validación de cédula -->
+                <div class="validation-messages mt-2">
+                    <div *ngIf="cedulaChecking" class="text-info small">
+                        <mat-icon class="me-1" style="font-size: 14px; vertical-align: middle;">schedule</mat-icon>
+                        Verificando cédula...
+                    </div>
+                    <div *ngIf="!cedulaValid && ci" class="text-danger small">
+                        <mat-icon class="me-1" style="font-size: 14px; vertical-align: middle;">error</mat-icon>
+                        La cédula debe tener exactamente 10 dígitos numéricos
+                    </div>
+                    <div *ngIf="cedulaExists" class="text-danger small">
+                        <mat-icon class="me-1" style="font-size: 14px; vertical-align: middle;">cancel</mat-icon>
+                        Esta cédula ya está registrada en el sistema
+                    </div>
+                    <div *ngIf="cedulaValid && !cedulaExists && ci && !cedulaChecking" class="text-success small">
+                        <mat-icon class="me-1" style="font-size: 14px; vertical-align: middle;">check_circle</mat-icon>
+                        Cédula válida y disponible
+                    </div>
+                </div>
             </div>
             <div class="col-md-6">
                 <mat-form-field class="w-100" >
                 <mat-label>Email</mat-label>
-                  <input required type="email" matInput [(ngModel)]="email">
+                  <input required type="email" matInput [(ngModel)]="email" name="email" (blur)="validateEmail()">
+                  <mat-error *ngIf="emailInvalid">
+                    El formato del email no es válido
+                  </mat-error>
                 </mat-form-field>
             </div>
             <div class="col-md-6">
                 <mat-form-field class="w-100" >
                 <mat-label>Contraseña</mat-label>
-                  <input required type="password" matInput [(ngModel)]="password">
+                  <input 
+                    required 
+                    type="password" 
+                    matInput 
+                    [(ngModel)]="password" 
+                    name="password"
+                    [minlength]="6"
+                    (blur)="validatePassword()">
+                  <mat-hint *ngIf="data.modo === 'agregar'">Mínimo 6 caracteres</mat-hint>
+                  <mat-error *ngIf="passwordInvalid">
+                    La contraseña debe tener al menos 6 caracteres
+                  </mat-error>
                 </mat-form-field>
             </div>
             <div class="col-md-6">
                 <mat-form-field class="w-100">
                     <mat-label>Estado</mat-label>
-                <mat-select required [(ngModel)]="type">
+                <mat-select required [(ngModel)]="type" name="type">
                     <mat-option value="activo">Activo</mat-option>
                     <mat-option value="inactivo">Inactivo</mat-option>
                 </mat-select>
@@ -47,7 +166,7 @@
              <div class="col-md-6">
                 <mat-form-field class="w-100">
                     <mat-label>Tipo de Usuario</mat-label>
-                <mat-select required [(ngModel)]="typeperfil">
+                <mat-select required [(ngModel)]="typeperfil" name="typeperfil">
                     <mat-option value="administrador">Administrador</mat-option>
                     <mat-option value="estudiante">Estudiante</mat-option>
                 </mat-select>
@@ -59,7 +178,13 @@
       </mat-card-content>
     </mat-card>
     <mat-card-actions class="p-3 border-top d-flex justify-content-end" >
-        <button class="me-4" mat-flat-button (click)="ActualizarOregistrarUsuario()"> 
+        <button 
+          class="me-4" 
+          mat-flat-button 
+          (click)="ActualizarOregistrarUsuario()"
+          [disabled]="cedulaExists || !cedulaValid || cedulaChecking || 
+                      nombreExists || !nombreValid || nombreChecking || 
+                      emailInvalid || passwordInvalid">
           {{ data.modo === 'agregar' ? 'Agregar' : 'Actualizar' }}
         </button>
         <button mat-stroked-button (click)="dialog.closeAll()">Cancelar</button>
