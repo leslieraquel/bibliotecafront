@@ -13,8 +13,13 @@ import {MatDividerModule} from '@angular/material/divider';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PreviewDialogComponent } from './preview-dialog/preview-dialog.component';
 // import { DialogPaqueteComponent } from './dialog-paquete/dialog-paquete.component';
-
+import { jwtDecode } from 'jwt-decode';
+import * as pdfjsLib from 'pdfjs-dist';
+// pdfjsLib.GlobalWorkerOptions.workerSrc = workerSrc;
+// (pdfjsLib as any).GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+declare var $: any;
 @Component({
   selector: 'app-libro',
   standalone: true,
@@ -35,14 +40,21 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
   templateUrl: './libro.component.html',
   styleUrl: './libro.component.css'
 })
+  
+
 export class LibroComponent implements AfterViewInit  {
   datos: any[] = [];
   datosFiltrados: any[] = [];
   ngAfterViewInit() {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = '/assets/pdfjs/pdf.worker.mjs';
+    
+  
       // this.dataSource.paginator = this.paginator;
       // this.dataSource.sort = this.sort;
       this.cargarLibros();
+
     }
+  
 
     constructor(private http: HttpClient,public dialog: MatDialog) {}
     
@@ -69,6 +81,7 @@ export class LibroComponent implements AfterViewInit  {
 
     );
   }
+
   descargarPDF(id: string) {
   this.http.get(`http://localhost:3000/api/libro/descargarPDF/${id}`, {
     responseType: 'blob'
@@ -89,17 +102,78 @@ export class LibroComponent implements AfterViewInit  {
     }
   });
 }
-verPDF(id: string) {
-  this.http.get(`http://localhost:3000/api/libro/descargarPDF/${id}`, {
-    responseType: 'blob'
-  }).subscribe({
-    next: (blob: Blob) => {
-      const fileURL = URL.createObjectURL(blob);
-      window.open(fileURL, '_blank');
-    },
-    error: err => console.error("ERROR", err)
+
+openPreview(id: string) {
+  this.dialog.open(PreviewDialogComponent, {
+    width: '90%',
+    maxWidth: '1000px',
+    height: '90%',
+    data: { id }
   });
+  const identificacion = localStorage.getItem('identificacion');
+  const tipoUsuario = localStorage.getItem('tipoUsuario');
+  this.guardarRegistro(id,identificacion);
+ 
 }
+
+guardarRegistro(libro:any,estudiante:any){
+    const estudianteData = {
+        prestamoDate:"2025-11-25T00:00:00.000Z",
+        devolucionDate:"2025-11-25T00:00:00.000Z",
+        idEstudiante: estudiante,
+        estado: "1",
+        idLibro: libro
+      };
+  
+      const baseUrl = 'http://localhost:3000/api/registro/';
+  
+        // Validar campos requeridos para agregar
+          this.http.post(baseUrl + 'save', estudianteData).subscribe({
+            next: (res) => {
+              // this.cerrarDialog();
+              // this.limpiarDatos();
+            },
+          });
+
+}
+// async verPDF(id: string) {
+//    const pdfBlob = await this.http.get(
+//     `http://localhost:3000/api/libro/descargarPDF/${id}`,
+//     { responseType: 'blob' }
+//   ).toPromise();
+
+//   // 2. CREAR URL TEMPORAL DEL PDF
+//   const url = URL.createObjectURL(pdfBlob!);
+
+//   // 3. CARGAR CON PDF.js
+//   const loadingTask = (pdfjsLib as any).getDocument(url);
+//   const pdf = await loadingTask.promise;
+
+//   const flipbook = document.getElementById('flipbook');
+
+//   for (let i = 1; i <= pdf.numPages; i++) {
+//     const page = await pdf.getPage(i);
+//     const viewport = page.getViewport({ scale: 1 });
+
+//     const canvas = document.createElement('canvas');
+//     const context = canvas.getContext('2d')!;
+//     canvas.width = viewport.width;
+//     canvas.height = viewport.height;
+
+//     await page.render({ canvasContext: context, viewport }).promise;
+
+//     const pageDiv = document.createElement('div');
+//     pageDiv.appendChild(canvas);
+
+//     flipbook?.appendChild(pageDiv);
+//   }
+
+//   ($('#flipbook') as any).turn({
+//     width: 800,
+//     height: 600,
+//     autoCenter: true
+//   });
+// }
 
   
 }

@@ -23,7 +23,7 @@
       <mat-card-actions class="card-actions">
         <button mat-raised-button color="warn" class="action-btn"
          class="action-btn"
-  (click)="verPDF(item.id)">Leer</button>
+  (click)="openPreview(item.id)">Leer</button>
         <button mat-raised-button color="warn" 
   class="action-btn"
   (click)="descargarPDF(item.id)">
@@ -32,6 +32,7 @@
       </mat-card-actions>
 
     </mat-card>
+    <!-- <div id="flipbook" class="flipbook-container"></div> -->
   </div>
 </div>
 
